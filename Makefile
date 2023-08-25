@@ -2,7 +2,7 @@ RAYLIBPATH = $(shell readlink -f raylib)
 
 export PATH := $(TINYCCPATH):$(PATH)
 export C_INCLUDE_PATH := $(RAYLIBPATH)/src:$(C_INCLUDE_PATH)
-export LIBRARY_PATH := $$(RAYLIBPATH)/src/external:$(LIBRARY_PATH)
+export LIBRARY_PATH := $(RAYLIBPATH)/src/external:$(LIBRARY_PATH)
 export LD_LIBRARY_PATH := $(RAYLIBPATH)/src:$(LD_LIBRARY_PATH)
 
 CCFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -Wunused-result -O2 -DPLATFORM_DESKTOP
