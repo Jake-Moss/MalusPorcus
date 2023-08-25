@@ -34,21 +34,15 @@ int main(void) {
     PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
 
-     // test physics body
-    PhysicsBody testBody = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight/2 }, 100, 100, 10);
-    testBody->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
-
-    // create a widget
-    SimpleWidget myWidget;
-    myWidget.image = 2;
-    myWidget.body = testBody;
-
     while (!WindowShouldClose()) {
 
         // spawn some R E C T A N G L E S
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            PhysicsBody rect = CreatePhysicsBodyRectangle(GetMousePosition(), GetRandomValue(100, 300),GetRandomValue(100, 200), 1.0);
-            rect->freezeOrient = true;
+            // PhysicsBody rect = CreatePhysicsBodyRectangle(GetMousePosition(), GetRandomValue(100, 300),GetRandomValue(100, 200), 1.0);
+            // rect->freezeOrient = true;
+
+            // create a widget
+            SimpleWidget myWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
         }
 
         // destroy physics bodies that have fallen off screen
@@ -68,7 +62,7 @@ int main(void) {
         BeginTextureMode(renderTexture);
             ClearBackground(RAYWHITE);
 
-            drawWidget(&myWidget);
+            // drawWidget(&myWidget);
 
             DrawText("WELCOME", screenWidth / 2, screenHeight / 2, 20, LIGHTGRAY);
             DrawText("For the dawgs", screenWidth / 2, screenHeight / 2 - 50, 20, LIGHTGRAY);
