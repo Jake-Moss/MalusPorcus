@@ -25,7 +25,7 @@ raylib-examples : raylib
 
 setup : raylib
 
-core_2d_camera_platformer : core_2d_camera_platformer.c
+% : %.c
 	gcc -o $@ $< $(CCFLAGS) $(LDFLAGS)
 
 run:
