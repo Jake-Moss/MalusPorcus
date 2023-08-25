@@ -1,2 +1,2 @@
 # Malus Porcus
-[Bad piggies](https://translate.google.com/?sl=auto&tl=la&text=bad%20pig&op=translate)
+[Malus Porcus](https://translate.google.com/?sl=la&tl=en&text=malus%20porcus&op=translate)
