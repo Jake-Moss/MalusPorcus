@@ -16,17 +16,38 @@ ifeq ($(UNAME_S),Darwin)
 	LDFLAGS += $(shell pkg-config --libs --cflags raylib)
 endif
 
-.PHONY: raylib raylib-examples setup
+SRCS = $(wildcard *.c)
+OBJS = $(patsubst %.c,%.o,$(SRCS))
+
+TARGET=main
+OUT=main
+
+
+.PHONY: raylib raylib-examples setup leaks run debug
+all: $(TARGET)
+
+setup : raylib
+
+debug: CCFLAGS += -g -O0
+debug: clean $(TARGET) clean
+
+clean:
+	rm -f *.o $(OUT)
+
+run: $(TARGET)
+	./$(OUT) $(ARGS)
+
+leaks: $(TARGET)
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(OUT) $(ARGS)
+
 raylib :
 	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=PLATFORM_DESKTOP
 
 raylib-examples : raylib
 	cd $(RAYLIBPATH)/examples && $(MAKE) PLATFORM=PLATFORM_DESKTOP
 
-setup : raylib
+$(TARGET): $(OBJS)
+	$(CC) $(CCFLAGS) $(LDFLAGS) $^ -o $(OUT)
 
-% : %.c
-	gcc -o $@ $< $(CCFLAGS) $(LDFLAGS)
-
-run:
-	./main
+%.o: %.c %.h
+	$(CC) -c $(CCFLAGS) $< -o $@

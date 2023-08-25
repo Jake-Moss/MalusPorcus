@@ -1,14 +1,6 @@
-// #include "raylib.h"
-// #include "stdio.h"
-
-// #define PHYSAC_IMPLEMENTATION
-// #include "physac.h"
-
-struct simpleWidget {
-    PhysicsBody body;
-    int image;
-};
-typedef struct simpleWidget SimpleWidget;
+#define PHYSAC_IMPLEMENTATION
+#include "widget.h"
+#include "stdio.h"
 
 SimpleWidget newWidget(Vector2 location, Vector2 size, int image) {
     PhysicsBody body = CreatePhysicsBodyRectangle(location, size.x, size.y, 1.0);

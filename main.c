@@ -1,11 +1,9 @@
+#include "stdio.h"
 #include "raylib.h"
 // #include "raymath.h"
-#include "stdio.h"
-
-#define PHYSAC_IMPLEMENTATION
 #include "physac.h"
 
-#include "widget.c"
+#include "widget.h"
 
 int main(void) {
     const int screenWidth = 640;
