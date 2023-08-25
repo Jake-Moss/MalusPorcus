@@ -4,15 +4,16 @@ export C_INCLUDE_PATH := $(RAYLIBPATH)/src:$(C_INCLUDE_PATH)
 export LIBRARY_PATH := $(RAYLIBPATH)/src:$(RAYLIBPATH)/src/external:$(LIBRARY_PATH)
 export LD_LIBRARY_PATH := $(RAYLIBPATH)/src:$(LD_LIBRARY_PATH)
 
-CCFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -Wunused-result -O2 -DPLATFORM_DESKTOP
+CCFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -Wunused-result -O2
+LDFLAGS = -lm
 
 UNAME_S := $(shell uname -s)
-
 ifeq ($(UNAME_S),Linux)
-	LDFLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+	CCFLAGS += -DPLATFORM_DESKTOP
+	LDFLAGS += -lraylib -lGL -lpthread -ldl -lrt -lX11
 endif
 ifeq ($(UNAME_S),Darwin)
-	LDFLAGS = $(pkg-config --libs --cflags raylib)
+	LDFLAGS += $(shell pkg-config --libs --cflags raylib)
 endif
 
 .PHONY: raylib raylib-examples setup
@@ -25,7 +26,6 @@ raylib-examples : raylib
 setup : raylib
 
 core_2d_camera_platformer : core_2d_camera_platformer.c
-	echo $(C_INCLUDE_PATH)
 	gcc -o $@ $< $(CCFLAGS) $(LDFLAGS)
 
 run:
