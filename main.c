@@ -5,6 +5,8 @@
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
 
+#include "widget.c"
+
 int main(void) {
     const int screenWidth = 640;
     const int screenHeight = 480;
@@ -32,6 +34,15 @@ int main(void) {
     PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
 
+     // test physics body
+    PhysicsBody testBody = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight/2 }, 100, 100, 10);
+    testBody->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
+
+    // create a widget
+    SimpleWidget myWidget;
+    myWidget.image = 2;
+    myWidget.body = testBody;
+
     while (!WindowShouldClose()) {
 
         // spawn some R E C T A N G L E S
@@ -50,7 +61,6 @@ int main(void) {
                 DestroyPhysicsBody(body);
         }
 
-
         // typically things are done between `BeginDrawing()` and `EndDrawing()`.
         // Instead, we're going to draw to a texture, so our actual drawing is just
         // drawing the texture itself. Allows for scaling for pixel-accurate
@@ -58,6 +68,7 @@ int main(void) {
         BeginTextureMode(renderTexture);
             ClearBackground(RAYWHITE);
 
+            drawWidget(&myWidget);
 
             DrawText("WELCOME", screenWidth / 2, screenHeight / 2, 20, LIGHTGRAY);
             DrawText("For the dawgs", screenWidth / 2, screenHeight / 2 - 50, 20, LIGHTGRAY);
