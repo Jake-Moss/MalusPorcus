@@ -29,4 +29,4 @@ setup : raylib
 	gcc -o $@ $< $(CCFLAGS) $(LDFLAGS)
 
 run:
-	./core_2d_camera_platformer
+	./main
