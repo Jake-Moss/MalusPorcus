@@ -9,23 +9,35 @@ export LD_LIBRARY_PATH := $(RAYLIBPATH)/src:$(LD_LIBRARY_PATH)
 .SUFFIXES:
 
 TARGET=main
-OUT=main
 
 SRCS = $(wildcard *.c)
 HEADERS = $(wildcard *.h)
 OBJS = $(patsubst %.c,%.o,$(SRCS))
 
-PLATFORM ?= PLATFORM_WEB
+P ?= DESKTOP
+ifeq ($(P),WEB)
+	PLATFORM = PLATFORM_WEB
+else
+	PLATFORM = PLATFORM_DESKTOP
+endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
 	CC=emcc
 	LDFLAGS += --shell-file $(RAYLIBPATH)/src/shell.html -s USE_GLFW=3 -s ASYNCIFY -pthread $(RAYLIBPATH)/src/libraylib.a
 	OUT=main.html
+else
+	CC=gcc
+	OUT=main
 endif
+
+RAYLIB_LIBTYPE ?= STATIC
+
+UNAME_S := $(shell uname -s)
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 	ifeq ($(UNAME_S),Linux)
 		CCFLAGS += -D$(PLATFORM)
 		LDFLAGS += -lraylib -lGL -pthread -ldl -lrt -lX11
+		RAYLIB_LIBTYPE = SHARED
 	endif
 	ifeq ($(UNAME_S),Darwin)
 		LDFLAGS += $(shell pkg-config --libs --cflags raylib)
@@ -35,7 +47,6 @@ endif
 CCFLAGS += -Wall -std=c99 -pthread -D_DEFAULT_SOURCE -Wno-missing-braces -Wunused-result -O2
 LDFLAGS += -lm
 
-UNAME_S := $(shell uname -s)
 
 
 .PHONY: raylib raylib-examples setup leaks run debug host emsdk
@@ -60,7 +71,7 @@ leaks: $(TARGET)
 
 raylib :
 	cd $(RAYLIBPATH)/src && $(MAKE) clean
-	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=$(PLATFORM) CUSTOM_CFLAGS=-pthread
+	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=$(PLATFORM) RAYLIB_LIBTYPE=$(RAYLIB_LIBTYPE) CUSTOM_CFLAGS=-pthread
 
 emsdk :
 	cd $(EMSDKPATH) && ./emsdk install latest && ./emsdk activate latest
