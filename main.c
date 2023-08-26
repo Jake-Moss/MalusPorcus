@@ -4,6 +4,8 @@
 #include "physac.h"
 
 #include "widget.h"
+#define PHYSAC_IMPLEMENTATION
+#include "physac.h"
 
 int main(int argc, char* argv[]) {
     const int screenWidth = 640;

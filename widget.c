@@ -1,4 +1,3 @@
-#define PHYSAC_IMPLEMENTATION
 #include "widget.h"
 #include "stdio.h"
 
