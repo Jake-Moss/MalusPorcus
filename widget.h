@@ -4,14 +4,33 @@
 #include "raylib.h"
 #include "physac.h"
 
-struct simpleWidget {
+typedef struct textObj {
+    Font textFont;
+    char* textContent;
+    Vector2 pos;
+} TextObj;
+
+typedef struct imageObj {
+    Texture textureImage;
+    Vector2 pos;
+} ImageObj;
+
+typedef struct renderPacket {
+    ImageObj imageObj;
+    TextObj textObj;
+
+} RenderPacket;
+
+typedef struct widget {
     PhysicsBody body;
+    RenderPacket renderPacket;
     int image;
-};
-typedef struct simpleWidget SimpleWidget;
+    // definitions of state (bools)
+    bool isGrabbed;
+} Widget;
 
-SimpleWidget newWidget(Vector2 location, Vector2 size, int image);
+Widget newWidget(Vector2 location, Vector2 size, int image);
 
-void drawWidget(SimpleWidget *widget);
+void drawWidget(Widget *widget);
 
 #endif

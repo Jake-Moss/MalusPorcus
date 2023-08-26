@@ -6,7 +6,7 @@
 #include "widget.h"
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
-
+#include "digital_clock.h"
 int main(int argc, char* argv[]) {
     const int screenWidth = 640;
     const int screenHeight = 480;
@@ -34,7 +34,9 @@ int main(int argc, char* argv[]) {
     PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2.0, screenHeight }, screenWidth, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
 
+    Font font = LoadFont("raylib/examples/text/resources/fonts/romulus.png");
     while (!WindowShouldClose()) {
+        // keep a local track of the widgets initialized
 
         // spawn some R E C T A N G L E S
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -42,7 +44,7 @@ int main(int argc, char* argv[]) {
             // rect->freezeOrient = true;
 
             // create a widget
-            SimpleWidget myWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
+            Widget myWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
         }
 
         // destroy physics bodies that have fallen off screen
@@ -62,11 +64,12 @@ int main(int argc, char* argv[]) {
         BeginTextureMode(renderTexture);
             ClearBackground(RAYWHITE);
 
-            // drawWidget(&myWidget);
 
             DrawText("WELCOME", screenWidth / 2, screenHeight / 2, 20, LIGHTGRAY);
             DrawText("For the dawgs", screenWidth / 2, screenHeight / 2 - 50, 20, LIGHTGRAY);
-            
+
+            drawDigitalClock(&myWidget);
+
             // debug draw physics bodies
             bodiesCount = GetPhysicsBodiesCount();
             for (int i = 0; i < bodiesCount; i++)
