@@ -6,26 +6,39 @@ export C_INCLUDE_PATH := $(RAYLIBPATH)/src:$(C_INCLUDE_PATH)
 export LIBRARY_PATH := $(RAYLIBPATH)/src:$(RAYLIBPATH)/src/external:$(LIBRARY_PATH)
 export LD_LIBRARY_PATH := $(RAYLIBPATH)/src:$(LD_LIBRARY_PATH)
 
-CCFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -Wunused-result -O2
-LDFLAGS = -lm
+.SUFFIXES:
 
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Linux)
-	CCFLAGS += -DPLATFORM_DESKTOP
-	LDFLAGS += -lraylib -lGL -lpthread -ldl -lrt -lX11
-endif
-ifeq ($(UNAME_S),Darwin)
-	LDFLAGS += $(shell pkg-config --libs --cflags raylib)
-endif
+TARGET=main
+OUT=main
 
 SRCS = $(wildcard *.c)
 HEADERS = $(wildcard *.h)
 OBJS = $(patsubst %.c,%.o,$(SRCS))
 
-TARGET=main
-OUT=main
+PLATFORM ?= PLATFORM_WEB
 
-.PHONY: raylib raylib-examples setup leaks run debug
+ifeq ($(PLATFORM),PLATFORM_WEB)
+	CC=emcc
+	LDFLAGS += --shell-file $(RAYLIBPATH)/src/shell.html -s USE_GLFW=3 -s ASYNCIFY -pthread $(RAYLIBPATH)/src/libraylib.a
+	OUT=main.html
+endif
+ifeq ($(PLATFORM),PLATFORM_DESKTOP)
+	ifeq ($(UNAME_S),Linux)
+		CCFLAGS += -D$(PLATFORM)
+		LDFLAGS += -lraylib -lGL -pthread -ldl -lrt -lX11
+	endif
+	ifeq ($(UNAME_S),Darwin)
+		LDFLAGS += $(shell pkg-config --libs --cflags raylib)
+	endif
+endif
+
+CCFLAGS += -Wall -std=c99 -pthread -D_DEFAULT_SOURCE -Wno-missing-braces -Wunused-result -O2
+LDFLAGS += -lm
+
+UNAME_S := $(shell uname -s)
+
+
+.PHONY: raylib raylib-examples setup leaks run debug host
 all: $(TARGET)
 
 setup : raylib
@@ -34,23 +47,25 @@ debug: CCFLAGS += -g -O0 -DPHYSAC_DEBUG
 debug: clean $(TARGET) clean
 
 clean:
-	rm -f *.o $(OUT)
+	rm -f *.o *.wasm *.html *.js $(OUT)
 
-run: $(TARGET)
+run : $(TARGET)
 	./$(OUT) $(ARGS)
+
+host :
+	$(EMSDKPATH)/upstream/emscripten/emrun $(OUT)
 
 leaks: $(TARGET)
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(OUT) $(ARGS)
 
 raylib :
-	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=PLATFORM_DESKTOP
+	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=$(PLATFORM) CUSTOM_CFLAGS=-pthread
 
 emsdk :
 	cd $(EMSDKPATH) && ./emsdk install latest && ./emsdk activate latest
-	source ./emsdk_env.sh &&
 
 raylib-examples : raylib
-	cd $(RAYLIBPATH)/examples && $(MAKE) PLATFORM=PLATFORM_DESKTOP
+	cd $(RAYLIBPATH)/examples && $(MAKE) PLATFORM=$(PLATFORM)
 
 $(TARGET): $(OBJS)
 	$(CC) $(CCFLAGS) $(LDFLAGS) $^ -o $(OUT)
