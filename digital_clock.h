@@ -2,6 +2,6 @@
 #define DIGITAL_CLOCK_H_
 
 #include "widget.h"
-void drawDigitalClock(SimpleWidget *parent, Font *font);
+void drawDigitalClock(Widget *parent, Font  *font);
 
 #endif // DIGITAL-CLOCK_H_

@@ -7,37 +7,41 @@
 
 #include "stddef.h"
 #include "stdlib.h"
+//
 
-struct simpleWidget {
+
+typedef struct widget Widget;
+struct widget {
     PhysicsBody body;
     int image;
     Vector2 size; //width, height
     Vector2 grabOffset;
     bool isGrabbed;
+    void (*draw)(Widget*); // generic draw function pointer
+                                             // to be then defined for that
+                                             // specific widget
 };
-typedef struct simpleWidget SimpleWidget;
 
-SimpleWidget newWidget(Vector2 location, Vector2 size, int image);
+void draw(Widget *widget);
 
-void drawWidget(SimpleWidget *widget);
+Widget newWidget(Vector2 location, Vector2 size, int image);
 
-void drawGenericWidgetBG(SimpleWidget *widget);
+void drawGenericWidgetBG(Widget *widget);
 
-#define DARKERBROWN  (Color){ 56, 43, 27, 255 } 
+void drawWidget(Widget *widget);
 
-void moveWhenGrabbed(SimpleWidget *widget);
+void moveWhenGrabbed(Widget *widget);
 
 struct WidgetArray {
-    SimpleWidget *array;
-    size_t used;
+    Widget *array;
     size_t size;
-    int count;
+    size_t count;
 };
 
 typedef struct WidgetArray WidgetArray;
 
 void initWidgetArray(WidgetArray *a, size_t initialSize);
-void insertWidgetArray(WidgetArray *a, SimpleWidget element);
+void insertWidgetArray(WidgetArray *a, Widget element);
 void freeWidgetArray(WidgetArray *a);
 
 #endif

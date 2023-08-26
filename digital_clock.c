@@ -10,8 +10,10 @@
 //
 // output:     - RenderPacket widget
 //
-
-void drawDigitalClock(SimpleWidget *parent, Font *font) {
+Widget createDigitalClock(Vector2 *size, Font *font) {
+    // makes a widget,
+}
+void markDigitalClock(Widget *parent, Font *font) {
     time_t rawtime;
     struct tm * timeinfo;
 
