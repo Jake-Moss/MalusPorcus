@@ -40,6 +40,7 @@ int main(int argc, char* argv[]) {
 
     WidgetArray myWidgets;
     initWidgetArray(&myWidgets, 3);
+    Font font = LoadFont("raylib/examples/text/resources/fonts/romulus.png");
 
     while (!WindowShouldClose()) {
 
@@ -133,7 +134,7 @@ int main(int argc, char* argv[]) {
                 SimpleWidget testWidget = myWidgets.array[i];
                 PhysicsBody testBody = testWidget.body;
 
-                drawDigitalClock(&testWidget);
+                drawDigitalClock(&testWidget, &font);
                 if (myWidgets.array[i].isGrabbed) {
                     DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
                     DrawLine(testBody->position.x, testBody->position.y, testBody->position.x + testWidget.grabOffset.x, testBody->position.y + testWidget.grabOffset.y, ORANGE);

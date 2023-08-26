@@ -11,7 +11,7 @@
 // output:     - RenderPacket widget
 //
 
-void drawDigitalClock(SimpleWidget *parent, Font font) {
+void drawDigitalClock(SimpleWidget *parent, Font *font) {
     time_t rawtime;
     struct tm * timeinfo;
 
@@ -20,5 +20,5 @@ void drawDigitalClock(SimpleWidget *parent, Font font) {
 
     Vector2 pos = parent->body->position;
 
-    DrawTextEx(font, asctime (timeinfo), pos, font.baseSize*2.0f, 3, DARKPURPLE);
+    DrawTextEx(*font, asctime (timeinfo), pos, font->baseSize*2.0f, 3, DARKPURPLE);
 }
