@@ -47,15 +47,30 @@ int main(int argc, char* argv[]) {
         if (IsMouseButtonUp(MOUSE_LEFT_BUTTON)) {
             mouseClickHandled = false;
             somethingIsClickedOn = false;
+
+            // reset grabbed state
+            for (int i = 0; i < myWidgets.count; i++) {
+                myWidgets.array[i].isGrabbed = false;
+                myWidgets.array[i].grabOffset = (Vector2) {0.0, 0.0};
+            }
         }
 
         // now actually handle that click
-        int bodiesCount = GetPhysicsBodiesCount();
-        for (int i = 0; i < bodiesCount; i++) {
-            PhysicsBody body = GetPhysicsBody(i);
-            int vertexCount = GetPhysicsShapeVerticesCount(i);
-            
-            somethingIsClickedOn = somethingIsClickedOn || (pointInPhysicsBody(GetMousePosition(), body, vertexCount));
+        for (int i = 0; i < myWidgets.count; i++) {
+            SimpleWidget testWidget = myWidgets.array[i];
+            PhysicsBody testBody = testWidget.body;
+            int vertexCount = testBody->shape.vertexData.vertexCount;
+
+
+            somethingIsClickedOn = somethingIsClickedOn || pointInPhysicsBody(GetMousePosition(), testBody, vertexCount);
+            if (pointInPhysicsBody(GetMousePosition(), testBody, vertexCount) && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !mouseClickHandled) { // this is a bad place to put mouseClickHandled, wastes some resources
+                mouseClickHandled = true;
+                myWidgets.array[i].isGrabbed = true;
+                myWidgets.array[i].grabOffset = Vector2Subtract(GetMousePosition(), myWidgets.array[i].body->position);
+            }
+
+            // if it's grabbed, or whatever else is grabbed, apply a force
+            moveWhenGrabbed(&myWidgets.array[i]);
         }
 
         // spawn some R E C T A N G L E S
@@ -69,7 +84,7 @@ int main(int argc, char* argv[]) {
         }
 
         // destroy physics bodies that have fallen off screen
-        bodiesCount = GetPhysicsBodiesCount();
+        int bodiesCount = GetPhysicsBodiesCount();
         for (int i = bodiesCount - 1; i >= 0; i--)
         {
             PhysicsBody body = GetPhysicsBody(i);
@@ -110,6 +125,19 @@ int main(int argc, char* argv[]) {
 
                         DrawLineV(vertexA, vertexB, GREEN);     // Draw a line between two vertex positions
                     }
+                }
+            }
+
+            // draw widgets
+            for (int i = 0; i < myWidgets.count; i++) {
+                SimpleWidget testWidget = myWidgets.array[i];
+                PhysicsBody testBody = testWidget.body;
+                
+                if (myWidgets.array[i].isGrabbed) {
+                    DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
+                    DrawLine(testBody->position.x, testBody->position.y, testBody->position.x + testWidget.grabOffset.x, testBody->position.y + testWidget.grabOffset.y, ORANGE);
+                } else {
+                    DrawCircle(testBody->position.x, testBody->position.y, 10, BLUE);
                 }
             }
             

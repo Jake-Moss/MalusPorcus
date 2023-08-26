@@ -7,6 +7,8 @@ SimpleWidget newWidget(Vector2 location, Vector2 size, int image) {
     SimpleWidget newWidget;
     newWidget.body = body;
     newWidget.image = image;
+    newWidget.isGrabbed = false;
+    newWidget.grabOffset = (Vector2) {0.0, 0.0};
 
     return newWidget;
 }
@@ -16,6 +18,15 @@ void drawWidget(SimpleWidget *widget) {
     DrawCircle(pos.x, pos.y, 10.0, BLUE);
 }
 
+void moveWhenGrabbed(SimpleWidget *widget) {
+    // check if the widget is currently grabbed - if so, move towards the mouse + graboffset (using a lot of impulse)
+
+    if (widget->isGrabbed) {
+        Vector2 grabOffsetMouseDifference = Vector2Subtract(Vector2Subtract(GetMousePosition(), widget->grabOffset), widget->body->position);
+        PhysicsAddForce(widget->body, Vector2Scale(grabOffsetMouseDifference, Vector2LengthSqr(grabOffsetMouseDifference)));
+        widget->body->velocity = Vector2Scale(widget->body->velocity, 0.9);
+    }
+}
 
 
 
@@ -25,6 +36,7 @@ void initWidgetArray(WidgetArray *a, size_t initialSize) {
     a->array = malloc(initialSize * sizeof(SimpleWidget)); // should this be sizeof(SimpleWidget)?
     a->used = 0;
     a->size = initialSize;
+    a->count = 0;
 }
 
 void insertWidgetArray(WidgetArray *a, SimpleWidget element) {
@@ -35,6 +47,7 @@ void insertWidgetArray(WidgetArray *a, SimpleWidget element) {
         a->array = realloc(a->array, a->size * sizeof(SimpleWidget)); // as above?
     }
     a->array[a->used++] = element;
+    a->count++;
 }
 
 void freeWidgetArray(WidgetArray *a) {
