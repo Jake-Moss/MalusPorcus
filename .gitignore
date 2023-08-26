@@ -2,3 +2,6 @@
 main
 out
 *.o
+*.html
+*.js
+*.wasm
