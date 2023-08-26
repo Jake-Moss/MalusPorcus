@@ -4,6 +4,8 @@ export C_INCLUDE_PATH := $(RAYLIBPATH)/src:$(C_INCLUDE_PATH)
 export LIBRARY_PATH := $(RAYLIBPATH)/src:$(RAYLIBPATH)/src/external:$(LIBRARY_PATH)
 export LD_LIBRARY_PATH := $(RAYLIBPATH)/src:$(LD_LIBRARY_PATH)
 
+CC=gcc
+
 CCFLAGS = -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces -Wunused-result -O2
 LDFLAGS = -lm
 
@@ -41,13 +43,16 @@ leaks: $(TARGET)
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(OUT) $(ARGS)
 
 raylib :
-	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=PLATFORM_DESKTOP
+	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=PLATFORM_DESKTOP RAYLIB_LIBTYPE=SHARED
 
 raylib-examples : raylib
-	cd $(RAYLIBPATH)/examples && $(MAKE) PLATFORM=PLATFORM_DESKTOP
+	cd $(RAYLIBPATH)/examples && $(MAKE) PLATFORM=PLATFORM_DESKTOP RAYLIB_LIBTYPE=SHARED
 
 $(TARGET): $(OBJS)
 	$(CC) $(CCFLAGS) $(LDFLAGS) $^ -o $(OUT)
+
+$(TARGET).o: $(TARGET).c
+	$(CC) -c $(CCFLAGS) $< -o $@
 
 %.o: %.c %.h
 	$(CC) -c $(CCFLAGS) $< -o $@
