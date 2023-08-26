@@ -43,8 +43,10 @@ int main(int argc, char* argv[]) {
                              // per frame. Now like 160.
 
      // floor rectangle physics body
-    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2.0, screenHeight }, screenWidth, 100, 10);
-    floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
+    int deskHeight = 100;
+    PhysicsBody desk = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2.0, screenHeight }, screenWidth, deskHeight, 10);
+
+    desk->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
     // Lets now add some pizazz to the "floor" (or really the desk)
 
 
@@ -179,8 +181,14 @@ int main(int argc, char* argv[]) {
 
         // drawWidget(&myWidget);
 
-        DrawText("WELCOME", screenWidth / 2, screenHeight / 2, 20, LIGHTGRAY);
-        DrawText("For the dawgs", screenWidth / 2, screenHeight / 2 - 50, 20, LIGHTGRAY);
+        //DrawText("WELCOME", screenWidth / 2, screenHeight / 2, 20, LIGHTGRAY);
+        //DrawText("For the dawgs", screenWidth / 2, screenHeight / 2 - 50, 20, LIGHTGRAY);
+
+        // draw and colour in the fg and bg
+        //
+        // getting the dimensions of the floor, then creating a rectangular shape
+        Color deskColor = (Color){25, 25, 26, 255};
+        DrawRectangle(0, SCREEN_HEIGHT-deskHeight/2, SCREEN_WIDTH, deskHeight/2, deskColor);
 
         DrawRectangleLines(plusButton.x, plusButton.y, plusButton.width, plusButton.height, BLACK);
         DrawLine(plusButton.x + 5, plusButton.y + 10, plusButton.x + 15, plusButton.y + 10, BLACK);
