@@ -40,7 +40,7 @@ void drawDigitalClock(Widget *widget) {
     DrawRectangleRounded(innerRect, 0.15, 100, WHITE);
 
     int fontSpacing = 2;
-    float fontScale = 0.7f;
+    float fontScale = 2.7f;
     // already function that does it for me!
     float fontCharSize = (widget->font.baseSize)*fontScale;
     //int fontCharLength = fontCharSize * fontSpacing;
