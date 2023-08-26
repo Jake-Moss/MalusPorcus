@@ -14,39 +14,6 @@
 #define MAX(a, b) ((a)>(b)? (a) : (b))
 #define MIN(a, b) ((a)<(b)? (a) : (b))
 
-// for audio stream
-#define MAX_SAMPLES               512
-#define MAX_SAMPLES_PER_UPDATE   4096
-
-float toneFrequency = 440.0;
-
-float myFrequencies[] = {440.0, 436.0};
-
-float sinIdx = 0.0;
-float sinIdxs[] = {0.0, 0.0};
-
-void AudioInputCallback(void *buffer, unsigned int frames) {
-    float audioFrequency[] = {myFrequencies[0], myFrequencies[1]};
-    audioFrequency[0] += 1.0;
-    audioFrequency[1] += 1.0;
-    audioFrequency[0] -= 1.0;
-    audioFrequency[1] -= 1.0;
-
-    float incr[] = {audioFrequency[0] / 44100.0, audioFrequency[1] / 44100.0};
-    short *d = (short *)buffer;
-
-    for (unsigned int i = 0; i < frames; i++)
-    {
-        d[i] = (short)(0.5*32000.0*(sinf(2*PI*sinIdxs[0]) + sinf(2*PI*sinIdxs[1])));
-        // sinIdx += incr;
-        sinIdxs[0] += incr[0];
-        sinIdxs[1] += incr[1];
-        // if (sinIdx > 1.0) sinIdx -= 1.0;
-        if (sinIdxs[0] > 1.0) sinIdxs[0] -= 1.0;
-        if (sinIdxs[1] > 1.0) sinIdxs[1] -= 1.0;
-    }
-}
-
 int main(int argc, char* argv[]) {
     const int screenWidth = 960;
     const int screenHeight = 720;
@@ -61,7 +28,7 @@ int main(int argc, char* argv[]) {
 
     AudioStream stream = LoadAudioStream(44100, 16, 1); // magic numbers :O
 
-    SetAudioStreamCallback(stream, AudioInputCallback);
+    SetAudioStreamCallback(stream, ToneGenAudioInputCallback);
 
     // Buffer for the single cycle waveform we are synthesizing
     short *data = (short *)malloc(sizeof(short)*MAX_SAMPLES);
@@ -126,9 +93,6 @@ int main(int argc, char* argv[]) {
 
         if (IsKeyPressed(KEY_D)) debugRender = !debugRender;
 
-        if (IsKeyPressed(KEY_UP)) toneFrequency = 1.1 * toneFrequency;
-        if (IsKeyPressed(KEY_DOWN)) toneFrequency = 0.9 * toneFrequency;
-
         // now actually handle that click
         for (int i = 0; i < myWidgets.count; i++) {
             if (myWidgets.array[i].dead) {continue;}
@@ -183,6 +147,10 @@ int main(int argc, char* argv[]) {
             if ((body != NULL) && (body->position.y > screenHeight*2)) {
                 myWidgets.array[i].free(&myWidgets.array[i]);
             }
+        }
+
+        for (int i = 0; i < myWidgets.count; i++) {
+            enableTone(&myWidgets.array[i]);
         }
 
         // typically things are done between `BeginDrawing()` and `EndDrawing()`.
