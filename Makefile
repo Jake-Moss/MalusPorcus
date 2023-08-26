@@ -38,7 +38,7 @@ LDFLAGS += -lm
 UNAME_S := $(shell uname -s)
 
 
-.PHONY: raylib raylib-examples setup leaks run debug host
+.PHONY: raylib raylib-examples setup leaks run debug host emsdk
 all: $(TARGET)
 
 setup : raylib
@@ -59,9 +59,10 @@ leaks: $(TARGET)
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(OUT) $(ARGS)
 
 raylib :
+	cd $(RAYLIBPATH)/src && $(MAKE) clean
 	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=$(PLATFORM) CUSTOM_CFLAGS=-pthread
 
-emsdk :
+emsdk : raylib
 	cd $(EMSDKPATH) && ./emsdk install latest && ./emsdk activate latest
 
 raylib-examples : raylib
