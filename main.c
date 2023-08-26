@@ -144,7 +144,6 @@ int main(int argc, char* argv[]) {
                 Widget testWidget = myWidgets.array[i];
                 PhysicsBody testBody = testWidget.body;
 
-<<<<<<< HEAD
                 // drawDigitalClock(&testWidget, &font);
                 
                 drawGenericWidgetBG(&myWidgets.array[i]);
@@ -156,16 +155,6 @@ int main(int argc, char* argv[]) {
                     } else {
                         DrawCircle(testBody->position.x, testBody->position.y, 10, BLUE);
                     }
-=======
-                //drawDigitalClock(&testWidget, &font);
-                //
-                if (myWidgets.array[i].isGrabbed) {
-                    DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
-                    DrawLine(testBody->position.x, testBody->position.y, testBody->position.x + testWidget.grabOffset.x, testBody->position.y + testWidget.grabOffset.y, ORANGE);
-                } else {
-                    // DrawCircle(testBody->position.x, testBody->position.y, 10, BLUE);
-                    testWidget.draw(&testWidget);
->>>>>>> 0fc0bdabc1d4bb585814cf4c79cc659f63cbe4d8
                 }
             }
             
