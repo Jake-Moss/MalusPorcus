@@ -11,6 +11,8 @@ Widget newWidget(Vector2 location, Vector2 size, int image) {
     newWidget.isGrabbed = false;
     newWidget.grabOffset = (Vector2) {0.0, 0.0};
     newWidget.draw = &draw;
+    newWidget.dead = false;
+    newWidget.free = &widgetFree;
     return newWidget;
 }
 
@@ -71,7 +73,10 @@ void drawGenericWidgetBG(Widget *widget) {
     DrawRectangle(px + width - (footWidth + footHeight) / 2 - (footWidth - footHeight), py + height - footHeight / 2, footWidth - footHeight, footHeight / 2, BLACK);
 }
 
-
+void widgetFree(Widget *widget) {
+    widget->dead = true;
+    DestroyPhysicsBody(widget->body);
+}
 
 void initWidgetArray(WidgetArray *a, size_t initialSize) {
     a->array = malloc(initialSize * sizeof(Widget));

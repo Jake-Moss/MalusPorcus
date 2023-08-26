@@ -68,6 +68,7 @@ int main(int argc, char* argv[]) {
 
             // reset grabbed state
             for (int i = 0; i < myWidgets.count; i++) {
+                if (myWidgets.array[i].dead) {continue;}
                 myWidgets.array[i].isGrabbed = false;
                 myWidgets.array[i].grabOffset = (Vector2) {0.0, 0.0};
             }
@@ -77,10 +78,11 @@ int main(int argc, char* argv[]) {
 
         // now actually handle that click
         for (int i = 0; i < myWidgets.count; i++) {
+            if (myWidgets.array[i].dead) {continue;}
+
             Widget testWidget = myWidgets.array[i];
             PhysicsBody testBody = testWidget.body;
             int vertexCount = testBody->shape.vertexData.vertexCount;
-
 
             somethingIsClickedOn = somethingIsClickedOn || pointInPhysicsBody(virtualMouse, testBody, vertexCount);
             if (pointInPhysicsBody(virtualMouse, testBody, vertexCount) && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !mouseClickHandled) { // this is a bad place to put mouseClickHandled, wastes some resources
@@ -108,13 +110,13 @@ int main(int argc, char* argv[]) {
         }
 
         // destroy physics bodies that have fallen off screen
-        int bodiesCount = GetPhysicsBodiesCount();
-        for (int i = bodiesCount - 1; i >= 0; i--)
-        {
-            PhysicsBody body = GetPhysicsBody(i);
-            
-            if ((body != 0) && (body->position.y > screenHeight*2))
-                DestroyPhysicsBody(body);
+        for (int i = 0; i < myWidgets.count; i++) {
+            if (myWidgets.array[i].dead) {continue;}
+            PhysicsBody body = myWidgets.array[i].body;
+
+            if ((body != NULL) && (body->position.y > screenHeight*2)) {
+                myWidgets.array[i].free(&myWidgets.array[i]);
+            }
         }
 
         // typically things are done between `BeginDrawing()` and `EndDrawing()`.
@@ -131,10 +133,9 @@ int main(int argc, char* argv[]) {
             
             // debug draw physics bodies
             if (debugRender) {
-                bodiesCount = GetPhysicsBodiesCount();
-                for (int i = 0; i < bodiesCount; i++)
-                {
-                    PhysicsBody body = GetPhysicsBody(i);
+                for (int i = 0; i < myWidgets.count; i++) {
+                    if (myWidgets.array[i].dead) {continue;}
+                    PhysicsBody body = myWidgets.array[i].body;
 
                     if (body != 0)
                     {
@@ -157,6 +158,7 @@ int main(int argc, char* argv[]) {
 
             // draw widgets
             for (int i = 0; i < myWidgets.count; i++) {
+                if (myWidgets.array[i].dead) {continue;}
                 Widget testWidget = myWidgets.array[i];
                 PhysicsBody testBody = testWidget.body;
 

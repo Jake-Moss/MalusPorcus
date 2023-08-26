@@ -17,10 +17,10 @@ struct widget {
     Vector2 size; //width, height
     Vector2 grabOffset;
     bool isGrabbed;
-    Font font; // hack job adding the font components into the struct
-    void (*draw)(Widget*); // generic draw function pointer
-                                             // to be then defined for that
-                                             // specific widget
+    Font font; // hack job adding the font components into the structures
+    void (*draw)(Widget*); // generic draw function pointer to be then defined for that pecific widget
+    bool dead;
+    void (*free)(Widget*);
 };
 
 void draw(Widget *widget);
@@ -32,6 +32,8 @@ void drawGenericWidgetBG(Widget *widget);
 void drawWidget(Widget *widget);
 
 void moveWhenGrabbed(Widget *widget, Vector2 mousePosition);
+
+void widgetFree(Widget *widget);
 
 struct WidgetArray {
     Widget *array;
