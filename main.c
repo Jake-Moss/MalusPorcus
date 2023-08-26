@@ -1,6 +1,8 @@
 #include "raylib.h"
-// #include "raymath.h"
+#include "raymath.h"
 #include "physac.h"
+
+#include "stdlib.h"
 
 #include "widget.h"
 #include "helper.h"
@@ -8,11 +10,15 @@
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
 
+#define MAX(a, b) ((a)>(b)? (a) : (b))
+#define MIN(a, b) ((a)<(b)? (a) : (b))
+
 int main(int argc, char* argv[]) {
-    const int screenWidth = 640;
-    const int screenHeight = 480;
+    const int screenWidth = 960;
+    const int screenHeight = 720;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
+    // SetConfigFlags(FLAG_WINDOW_UNDECORATED); // <-- kinda cool
     InitWindow(screenWidth, screenHeight, "Cozy Desk Simulator");
 
     // TODO: force aspect ratio
@@ -24,6 +30,7 @@ int main(int argc, char* argv[]) {
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
     RenderTexture2D renderTexture = LoadRenderTexture(screenWidth, screenHeight);
+    SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_POINT);
 
 
     InitPhysics();
@@ -45,6 +52,14 @@ int main(int argc, char* argv[]) {
     bool debugRender = false;
     
     while (!WindowShouldClose()) {
+        float scale = MIN((float)GetScreenWidth()/screenWidth, (float)GetScreenHeight()/screenHeight);
+
+        Vector2 mouse = GetMousePosition();
+        Vector2 virtualMouse = { 0 };
+        virtualMouse.x = (mouse.x - (GetScreenWidth() - (screenWidth*scale))*0.5f)/scale;
+        virtualMouse.y = (mouse.y - (GetScreenHeight() - (screenHeight*scale))*0.5f)/scale;
+        virtualMouse = Vector2Clamp(virtualMouse, (Vector2){ 0, 0 }, (Vector2){ (float)screenWidth, (float)screenHeight });
+
 
         // we don't have a "mouse just clicked" thing, so we'll need to track state manually
         if (IsMouseButtonUp(MOUSE_LEFT_BUTTON)) {
@@ -67,15 +82,15 @@ int main(int argc, char* argv[]) {
             int vertexCount = testBody->shape.vertexData.vertexCount;
 
 
-            somethingIsClickedOn = somethingIsClickedOn || pointInPhysicsBody(GetMousePosition(), testBody, vertexCount);
-            if (pointInPhysicsBody(GetMousePosition(), testBody, vertexCount) && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !mouseClickHandled) { // this is a bad place to put mouseClickHandled, wastes some resources
+            somethingIsClickedOn = somethingIsClickedOn || pointInPhysicsBody(virtualMouse, testBody, vertexCount);
+            if (pointInPhysicsBody(virtualMouse, testBody, vertexCount) && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !mouseClickHandled) { // this is a bad place to put mouseClickHandled, wastes some resources
                 mouseClickHandled = true;
                 myWidgets.array[i].isGrabbed = true;
-                myWidgets.array[i].grabOffset = Vector2Subtract(GetMousePosition(), myWidgets.array[i].body->position);
+                myWidgets.array[i].grabOffset = Vector2Subtract(virtualMouse, myWidgets.array[i].body->position);
             }
 
             // if it's grabbed, or whatever else is grabbed, apply a force
-            moveWhenGrabbed(&myWidgets.array[i]);
+            moveWhenGrabbed(&myWidgets.array[i], virtualMouse);
         }
 
         // spawn some R E C T A N G L E S
@@ -84,10 +99,10 @@ int main(int argc, char* argv[]) {
             // rect->freezeOrient = true;
 
             // create a widget
-            Widget aWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
+            Widget aWidget = newWidget(virtualMouse, (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
             insertWidgetArray(&myWidgets, aWidget);
         } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn) {
-            Widget bWidget = newWidget(GetMousePosition(), (Vector2){120, 80}, 3);
+            Widget bWidget = newWidget(virtualMouse, (Vector2){120, 80}, 3);
             insertWidgetArray(&myWidgets, bWidget);
         }
 
@@ -163,14 +178,17 @@ int main(int argc, char* argv[]) {
         EndTextureMode();
 
         BeginDrawing(); // nobody touch this! Do your drawing in the BeginTextureMode above
-            DrawTexturePro(
-                renderTexture.texture,
-                (Rectangle){ 0, 0, (float)(renderTexture.texture.width), (float)(-renderTexture.texture.height) },
-                (Rectangle){ 0, 0, (float)(GetScreenWidth()), (float)(GetScreenHeight()) },
-                (Vector2){ 0, 0 },
-                0,
-                WHITE
-            );
+            // DrawTexturePro(
+            //     renderTexture.texture,
+            //     (Rectangle){ 0, 0, (float)(renderTexture.texture.width), (float)(-renderTexture.texture.height) },
+            //     (Rectangle){ 0, 0, (float)(GetScreenWidth()), (float)(GetScreenHeight()) },
+            //     (Vector2){ 0, 0 },
+            //     0,
+            //     WHITE
+            // );
+            DrawTexturePro(renderTexture.texture, (Rectangle){ 0.0f, 0.0f, (float)renderTexture.texture.width, (float)-renderTexture.texture.height },
+                           (Rectangle){ (GetScreenWidth() - ((float)screenWidth*scale))*0.5f, (GetScreenHeight() - ((float)screenHeight*scale))*0.5f,
+                           (float)screenWidth*scale, (float)screenHeight*scale }, (Vector2){ 0, 0 }, 0.0f, WHITE);
         EndDrawing();
     }
 
