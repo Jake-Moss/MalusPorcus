@@ -18,9 +18,11 @@ struct widget {
     Vector2 grabOffset;
     bool isGrabbed;
     Font font; // hack job adding the font components into the structures
-    void (*draw)(Widget*); // generic draw function pointer to be then defined for that pecific widget
+    void (*draw)(Widget*); // generic draw function pointer to be then defined for that specific widget
     bool dead;
     void (*free)(Widget*);
+    bool turnedOn; // use this for things we can turn on and off
+    int hasButton;
 };
 
 void draw(Widget *widget);

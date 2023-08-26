@@ -7,6 +7,7 @@
 #include "widget.h"
 #include "helper.h"
 #include "digital_clock.h"
+#include "tone_generator.h"
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
 
@@ -47,7 +48,7 @@ int main(int argc, char* argv[]) {
 
     WidgetArray myWidgets;
     initWidgetArray(&myWidgets, 3);
-    Font font = LoadFont("DSEG7Classic-Bold.ttf");
+    Font font = GetFontDefault();
 
     bool debugRender = false;
     
@@ -87,6 +88,16 @@ int main(int argc, char* argv[]) {
             somethingIsClickedOn = somethingIsClickedOn || pointInPhysicsBody(virtualMouse, testBody, vertexCount);
             if (pointInPhysicsBody(virtualMouse, testBody, vertexCount) && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !mouseClickHandled) { // this is a bad place to put mouseClickHandled, wastes some resources
                 mouseClickHandled = true;
+
+                // two options here: either grabbing something or pressing a button
+                // check if it has a button, then check if this distance between mouse and body is < button size
+                if (myWidgets.array[i].hasButton > 0) {
+                    if (Vector2Distance(myWidgets.array[i].body->position, virtualMouse) < myWidgets.array[i].hasButton) {
+                        myWidgets.array[i].turnedOn = !myWidgets.array[i].turnedOn;
+                        continue;
+                    }
+                }
+
                 myWidgets.array[i].isGrabbed = true;
                 myWidgets.array[i].grabOffset = Vector2Subtract(virtualMouse, myWidgets.array[i].body->position);
             }
@@ -103,10 +114,13 @@ int main(int argc, char* argv[]) {
             // create a widget
             Widget aWidget = newWidget(virtualMouse, (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
             insertWidgetArray(&myWidgets, aWidget);
-        } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn) {
+        } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn && IsKeyDown(KEY_C)) {
             //Widget bWidget = newWidget(virtualMouse, (Vector2){120, 80}, 3);
             Widget digitalClockWidget = createDigitalClock(virtualMouse, (Vector2){120, 80}, font);
             insertWidgetArray(&myWidgets, digitalClockWidget);
+        } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn && IsKeyDown(KEY_T)) {
+            Widget toneGeneratorWidget = createToneGenerator(virtualMouse, (Vector2){80, 80});
+            insertWidgetArray(&myWidgets, toneGeneratorWidget);
         }
 
         // destroy physics bodies that have fallen off screen
@@ -162,7 +176,7 @@ int main(int argc, char* argv[]) {
                 Widget testWidget = myWidgets.array[i];
                 PhysicsBody testBody = testWidget.body;
 
-                // drawDigitalClock(&testWidget, &font);
+                // drawDigitalClock(&testWidget);
                 
                 //drawGenericWidgetBG(&myWidgets.array[i]);
                 testWidget.draw(&testWidget);

@@ -13,6 +13,8 @@ Widget newWidget(Vector2 location, Vector2 size, int image) {
     newWidget.draw = &draw;
     newWidget.dead = false;
     newWidget.free = &widgetFree;
+    newWidget.turnedOn = false;
+    newWidget.hasButton = 0;
     return newWidget;
 }
 
