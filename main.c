@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 
     WidgetArray myWidgets;
     initWidgetArray(&myWidgets, 3);
-    Font font = LoadFont("raylib/examples/text/resources/fonts/romulus.png");
+    Font font = LoadFont("DSEG7Classic-Bold.ttf");
 
     bool debugRender = false;
     
@@ -87,8 +87,10 @@ int main(int argc, char* argv[]) {
             Widget aWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
             insertWidgetArray(&myWidgets, aWidget);
         } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn) {
-            Widget bWidget = newWidget(GetMousePosition(), (Vector2){120, 80}, 3);
-            insertWidgetArray(&myWidgets, bWidget);
+            //Widget bWidget = newWidget(GetMousePosition(), (Vector2){120, 80}, 3);
+            //insertWidgetArray(&myWidgets, bWidget);
+            Widget digitalClockWidget = createDigitalClock(GetMousePosition(), (Vector2){120, 80}, font);
+            insertWidgetArray(&myWidgets, digitalClockWidget);
         }
 
         // destroy physics bodies that have fallen off screen
@@ -146,14 +148,15 @@ int main(int argc, char* argv[]) {
 
                 // drawDigitalClock(&testWidget, &font);
                 
-                drawGenericWidgetBG(&myWidgets.array[i]);
-
+                //drawGenericWidgetBG(&myWidgets.array[i]);
+                testWidget.draw(&testWidget);
                 if (debugRender) {
                     if (myWidgets.array[i].isGrabbed) {
                         DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
                         DrawLine(testBody->position.x, testBody->position.y, testBody->position.x + testWidget.grabOffset.x, testBody->position.y + testWidget.grabOffset.y, ORANGE);
                     } else {
                         DrawCircle(testBody->position.x, testBody->position.y, 10, BLUE);
+
                     }
                 }
             }
@@ -167,9 +170,7 @@ int main(int argc, char* argv[]) {
                 renderTexture.texture,
                 (Rectangle){ 0, 0, (float)(renderTexture.texture.width), (float)(-renderTexture.texture.height) },
                 (Rectangle){ 0, 0, (float)(GetScreenWidth()), (float)(GetScreenHeight()) },
-                (Vector2){ 0, 0 },
-                0,
-                WHITE
+                (Vector2){ 0, 0 }, 0, WHITE
             );
         EndDrawing();
     }

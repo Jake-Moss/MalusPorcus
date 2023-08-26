@@ -17,6 +17,7 @@ struct widget {
     Vector2 size; //width, height
     Vector2 grabOffset;
     bool isGrabbed;
+    Font font; // hack job adding the font components into the struct
     void (*draw)(Widget*); // generic draw function pointer
                                              // to be then defined for that
                                              // specific widget
