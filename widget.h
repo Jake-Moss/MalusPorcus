@@ -32,9 +32,8 @@ void moveWhenGrabbed(Widget *widget);
 
 struct WidgetArray {
     Widget *array;
-    size_t used;
     size_t size;
-    int count;
+    size_t count;
 };
 
 typedef struct WidgetArray WidgetArray;

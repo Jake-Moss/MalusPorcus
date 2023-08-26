@@ -8,8 +8,6 @@ export LD_LIBRARY_PATH := $(RAYLIBPATH)/src:$(LD_LIBRARY_PATH)
 
 .SUFFIXES:
 
-TARGET=main
-
 SRCS = $(wildcard *.c)
 HEADERS = $(wildcard *.h)
 OBJS = $(patsubst %.c,%.o,$(SRCS))
@@ -24,10 +22,10 @@ endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
 	CC=emcc
 	LDFLAGS += --shell-file $(RAYLIBPATH)/src/shell.html -s USE_GLFW=3 -s ASYNCIFY -pthread $(RAYLIBPATH)/src/libraylib.a
-	OUT=main.html
+	TARGET=main.html
 else
 	CC=gcc
-	OUT=main
+	TARGET=main
 endif
 
 RAYLIB_LIBTYPE ?= STATIC
@@ -56,16 +54,16 @@ debug: CCFLAGS += -g -O0 -DPHYSAC_DEBUG
 debug: clean $(TARGET) clean
 
 clean:
-	rm -f *.o *.wasm *.html *.js $(OUT)
+	rm -f *.o *.wasm *.html *.js $(TARGET)
 
 run : $(TARGET)
-	./$(OUT) $(ARGS)
+	./$(TARGET) $(ARGS)
 
 host :
-	$(EMSDKPATH)/upstream/emscripten/emrun $(OUT)
+	$(EMSDKPATH)/upstream/emscripten/emrun $(TARGET)
 
 leaks: $(TARGET)
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(OUT) $(ARGS)
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET) $(ARGS)
 
 raylib :
 	cd $(RAYLIBPATH)/src && $(MAKE) clean
@@ -78,7 +76,7 @@ raylib-examples : raylib
 	cd $(RAYLIBPATH)/examples && $(MAKE) PLATFORM=$(PLATFORM)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CCFLAGS) $(LDFLAGS) $^ -o $(OUT)
+	$(CC) $(CCFLAGS) $(LDFLAGS) $^ -o $(TARGET)
 
 $(TARGET).o: $(TARGET).c
 	$(CC) -c $(CCFLAGS) $< -o $@
