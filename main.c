@@ -5,7 +5,7 @@
 
 #include "widget.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
     const int screenWidth = 640;
     const int screenHeight = 480;
 
@@ -29,7 +29,7 @@ int main(void) {
                              // per frame. Now like 160.
 
      // floor rectangle physics body
-    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2, screenHeight }, screenWidth, 100, 10);
+    PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2.0, screenHeight }, screenWidth, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
 
     while (!WindowShouldClose()) {

@@ -28,7 +28,7 @@ all: $(TARGET)
 
 setup : raylib
 
-debug: CCFLAGS += -g -O0
+debug: CCFLAGS += -g -O0 -DPHYSAC_DEBUG
 debug: clean $(TARGET) clean
 
 clean:
