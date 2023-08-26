@@ -39,8 +39,8 @@ void drawDigitalClock(Widget *widget) {
     Rectangle innerRect = {pos.x - innerRectWidth/2, pos.y - innerRectHeight/2, innerRectWidth, innerRectHeight};
     DrawRectangleRounded(innerRect, 0.15, 100, WHITE);
 
-    int fontSpacing = 3;
-    float fontScale = 2.0f;
+    int fontSpacing = 2;
+    float fontScale = 0.7f;
     // already function that does it for me!
     float fontCharSize = (widget->font.baseSize)*fontScale;
     //int fontCharLength = fontCharSize * fontSpacing;
@@ -54,5 +54,5 @@ void drawDigitalClock(Widget *widget) {
     pos.x = pos.x - textSize.x/2;
     pos.y = pos.y - textSize.y/2;
 
-    DrawTextEx(widget->font, buffer, pos, fontCharSize, fontSpacing, GREEN);
+    DrawTextEx(widget->font, buffer, pos, fontCharSize, fontSpacing, BLACK);
 }

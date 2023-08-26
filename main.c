@@ -102,8 +102,9 @@ int main(int argc, char* argv[]) {
             Widget aWidget = newWidget(virtualMouse, (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
             insertWidgetArray(&myWidgets, aWidget);
         } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn) {
-            Widget bWidget = newWidget(virtualMouse, (Vector2){120, 80}, 3);
-            insertWidgetArray(&myWidgets, bWidget);
+            //Widget bWidget = newWidget(virtualMouse, (Vector2){120, 80}, 3);
+            Widget digitalClockWidget = createDigitalClock(virtualMouse, (Vector2){120, 80}, font);
+            insertWidgetArray(&myWidgets, digitalClockWidget);
         }
 
         // destroy physics bodies that have fallen off screen
@@ -179,6 +180,7 @@ int main(int argc, char* argv[]) {
         EndTextureMode();
 
         BeginDrawing(); // nobody touch this! Do your drawing in the BeginTextureMode above
+            ClearBackground(BLACK);
             // DrawTexturePro(
             //     renderTexture.texture,
             //     (Rectangle){ 0, 0, (float)(renderTexture.texture.width), (float)(-renderTexture.texture.height) },
