@@ -21,6 +21,10 @@ SimpleWidget newWidget(Vector2 location, Vector2 size, int image);
 
 void drawWidget(SimpleWidget *widget);
 
+void drawGenericWidgetBG(SimpleWidget *widget);
+
+#define DARKERBROWN  (Color){ 56, 43, 27, 255 } 
+
 void moveWhenGrabbed(SimpleWidget *widget);
 
 struct WidgetArray {

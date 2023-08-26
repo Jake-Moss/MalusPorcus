@@ -1,4 +1,3 @@
-#include "stdio.h"
 #include "raylib.h"
 // #include "raymath.h"
 #include "physac.h"
@@ -43,6 +42,8 @@ int main(int argc, char* argv[]) {
     initWidgetArray(&myWidgets, 3);
     Font font = LoadFont("raylib/examples/text/resources/fonts/romulus.png");
 
+    bool debugRender = false;
+    
     while (!WindowShouldClose()) {
 
         // we don't have a "mouse just clicked" thing, so we'll need to track state manually
@@ -56,6 +57,8 @@ int main(int argc, char* argv[]) {
                 myWidgets.array[i].grabOffset = (Vector2) {0.0, 0.0};
             }
         }
+
+        if (IsKeyPressed(KEY_D)) debugRender = !debugRender;
 
         // now actually handle that click
         for (int i = 0; i < myWidgets.count; i++) {
@@ -108,40 +111,47 @@ int main(int argc, char* argv[]) {
             DrawText("For the dawgs", screenWidth / 2, screenHeight / 2 - 50, 20, LIGHTGRAY);
             
             // debug draw physics bodies
-            bodiesCount = GetPhysicsBodiesCount();
-            for (int i = 0; i < bodiesCount; i++)
-            {
-                PhysicsBody body = GetPhysicsBody(i);
-
-                if (body != 0)
+            if (debugRender) {
+                bodiesCount = GetPhysicsBodiesCount();
+                for (int i = 0; i < bodiesCount; i++)
                 {
-                    int vertexCount = GetPhysicsShapeVerticesCount(i);
-                    for (int j = 0; j < vertexCount; j++)
+                    PhysicsBody body = GetPhysicsBody(i);
+
+                    if (body != 0)
                     {
-                        // Get physics bodies shape vertices to draw lines
-                        // Note: GetPhysicsShapeVertex() already calculates rotation transformations
-                        Vector2 vertexA = GetPhysicsShapeVertex(body, j);
+                        int vertexCount = GetPhysicsShapeVerticesCount(i);
+                        for (int j = 0; j < vertexCount; j++)
+                        {
+                            // Get physics bodies shape vertices to draw lines
+                            // Note: GetPhysicsShapeVertex() already calculates rotation transformations
+                            Vector2 vertexA = GetPhysicsShapeVertex(body, j);
 
-                        int jj = (((j + 1) < vertexCount) ? (j + 1) : 0);   // Get next vertex or first to close the shape
-                        Vector2 vertexB = GetPhysicsShapeVertex(body, jj);
+                            int jj = (((j + 1) < vertexCount) ? (j + 1) : 0);   // Get next vertex or first to close the shape
+                            Vector2 vertexB = GetPhysicsShapeVertex(body, jj);
 
-                        DrawLineV(vertexA, vertexB, GREEN);     // Draw a line between two vertex positions
+                            DrawLineV(vertexA, vertexB, GREEN);     // Draw a line between two vertex positions
+                        }
                     }
                 }
             }
+            
 
             // draw widgets
             for (int i = 0; i < myWidgets.count; i++) {
                 SimpleWidget testWidget = myWidgets.array[i];
                 PhysicsBody testBody = testWidget.body;
 
-                drawDigitalClock(&testWidget, &font);
-                //
-                if (myWidgets.array[i].isGrabbed) {
-                    DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
-                    DrawLine(testBody->position.x, testBody->position.y, testBody->position.x + testWidget.grabOffset.x, testBody->position.y + testWidget.grabOffset.y, ORANGE);
-                } else {
-                    DrawCircle(testBody->position.x, testBody->position.y, 10, BLUE);
+                // drawDigitalClock(&testWidget, &font);
+                
+                drawGenericWidgetBG(&myWidgets.array[i]);
+
+                if (debugRender) {
+                    if (myWidgets.array[i].isGrabbed) {
+                        DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
+                        DrawLine(testBody->position.x, testBody->position.y, testBody->position.x + testWidget.grabOffset.x, testBody->position.y + testWidget.grabOffset.y, ORANGE);
+                    } else {
+                        DrawCircle(testBody->position.x, testBody->position.y, 10, BLUE);
+                    }
                 }
             }
             

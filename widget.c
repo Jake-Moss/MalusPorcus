@@ -29,7 +29,42 @@ void moveWhenGrabbed(SimpleWidget *widget) {
     }
 }
 
+void drawGenericWidgetBG(SimpleWidget *widget) {
+    Vector2 centerPos = widget->body->position;
+    Vector2 size = widget->size;
 
+    float width = size.x;
+    float height = size.y;
+
+    float px = centerPos.x - width / 2;
+    float py = centerPos.y - height / 2;
+
+    int footHeight = 10;
+    int footWidth = 35;
+
+    int borderThickness = 5;
+
+    Rectangle rect = {px + borderThickness, py + borderThickness, width - 2 * borderThickness, height - footHeight - 2 * borderThickness};
+
+
+    Color keyColour = DARKPURPLE;
+    Color highColour = ColorBrightness(keyColour, 0.5);
+    Color lowColour = ColorBrightness(keyColour, -0.1);
+
+    // main body
+    DrawRectangleRounded(rect, 0.15, 100, keyColour);
+    DrawRectangleRoundedLines(rect, 0.15, 100, 5, highColour);
+    DrawRectangle(rect.x + 2 * borderThickness, rect.y + rect.height, rect.width - 4 * borderThickness, borderThickness, lowColour);
+    // DrawRectangle(px, py, width, height - footHeight, PINK);
+    // feet
+    // DrawRectangle(px, py + height - footHeight, width, footHeight, BLUE);
+    // left foot
+    DrawRectangle(px + footWidth / 2, py + height - footHeight, footWidth, footHeight / 2, BLACK);
+    DrawRectangle(px + (footWidth + footHeight) / 2, py + height - footHeight / 2, footWidth - footHeight, footHeight / 2, BLACK);
+    // right foot
+    DrawRectangle(px + width - footWidth / 2 - footWidth, py + height - footHeight, footWidth, footHeight / 2, BLACK);
+    DrawRectangle(px + width - (footWidth + footHeight) / 2 - (footWidth - footHeight), py + height - footHeight / 2, footWidth - footHeight, footHeight / 2, BLACK);
+}
 
 
 
