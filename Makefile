@@ -1,5 +1,7 @@
 RAYLIBPATH = $(shell readlink -f raylib)
+EMSDKPATH = $(shell readlink -f emsdk)
 
+export PATH := $(EMSDKPATH):$(EMSDKPATH)/upstream/emscripten:$(EMSDKPATH)/node/16.20.0_64bit/bin:$(PATH)
 export C_INCLUDE_PATH := $(RAYLIBPATH)/src:$(C_INCLUDE_PATH)
 export LIBRARY_PATH := $(RAYLIBPATH)/src:$(RAYLIBPATH)/src/external:$(LIBRARY_PATH)
 export LD_LIBRARY_PATH := $(RAYLIBPATH)/src:$(LD_LIBRARY_PATH)
@@ -17,11 +19,11 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 SRCS = $(wildcard *.c)
+HEADERS = $(wildcard *.h)
 OBJS = $(patsubst %.c,%.o,$(SRCS))
 
 TARGET=main
 OUT=main
-
 
 .PHONY: raylib raylib-examples setup leaks run debug
 all: $(TARGET)
@@ -42,6 +44,10 @@ leaks: $(TARGET)
 
 raylib :
 	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=PLATFORM_DESKTOP
+
+emsdk :
+	cd $(EMSDKPATH) && ./emsdk install latest && ./emsdk activate latest
+	source ./emsdk_env.sh &&
 
 raylib-examples : raylib
 	cd $(RAYLIBPATH)/examples && $(MAKE) PLATFORM=PLATFORM_DESKTOP
