@@ -24,11 +24,11 @@ void drawWidget(Widget *widget) {
     DrawCircle(pos.x, pos.y, 10.0, BLUE);
 }
 
-void moveWhenGrabbed(Widget *widget) {
+void moveWhenGrabbed(Widget *widget, Vector2 mousePosition) {
     // check if the widget is currently grabbed - if so, move towards the mouse + graboffset (using a lot of impulse)
 
     if (widget->isGrabbed) {
-        Vector2 grabOffsetMouseDifference = Vector2Subtract(Vector2Subtract(GetMousePosition(), widget->grabOffset), widget->body->position);
+        Vector2 grabOffsetMouseDifference = Vector2Subtract(Vector2Subtract(mousePosition, widget->grabOffset), widget->body->position);
         PhysicsAddForce(widget->body, Vector2Scale(grabOffsetMouseDifference, Vector2LengthSqr(grabOffsetMouseDifference)));
         widget->body->velocity = Vector2Scale(widget->body->velocity, 0.9);
     }

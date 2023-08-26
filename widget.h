@@ -31,7 +31,7 @@ void drawGenericWidgetBG(Widget *widget);
 
 void drawWidget(Widget *widget);
 
-void moveWhenGrabbed(Widget *widget);
+void moveWhenGrabbed(Widget *widget, Vector2 mousePosition);
 
 struct WidgetArray {
     Widget *array;
