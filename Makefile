@@ -21,7 +21,7 @@ endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
 	CC=emcc
-	LDFLAGS += --shell-file $(RAYLIBPATH)/src/shell.html -s USE_GLFW=3 -s ASYNCIFY -pthread $(RAYLIBPATH)/src/libraylib.a
+	LDFLAGS += --shell-file shell.html -s USE_GLFW=3 -s ASYNCIFY -pthread $(RAYLIBPATH)/src/libraylib.a
 	TARGET=main.html
 else
 	CC=gcc
@@ -75,8 +75,12 @@ emsdk :
 raylib-examples : raylib
 	cd $(RAYLIBPATH)/examples && $(MAKE) PLATFORM=$(PLATFORM)
 
+
+ifeq ($(PLATFORM),PLATFORM_WEB)
+$(TARGET): shell.html
+endif
 $(TARGET): $(OBJS)
-	$(CC) $(CCFLAGS) $(LDFLAGS) $^ -o $(TARGET)
+	$(CC) $(CCFLAGS) $(LDFLAGS) $(OBJS) -o $(TARGET)
 
 $(TARGET).o: $(TARGET).c
 	$(CC) -c $(CCFLAGS) $< -o $@
