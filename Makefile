@@ -59,7 +59,6 @@ leaks: $(TARGET)
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(OUT) $(ARGS)
 
 raylib :
-	cd $(RAYLIBPATH)/src && $(MAKE) clean
 	cd $(RAYLIBPATH)/src && $(MAKE) PLATFORM=$(PLATFORM) CUSTOM_CFLAGS=-pthread
 
 emsdk : raylib
