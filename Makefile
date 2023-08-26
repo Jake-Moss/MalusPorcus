@@ -52,8 +52,6 @@ LDFLAGS += -lm
 .PHONY: raylib raylib-examples setup leaks run debug host emsdk
 all: $(TARGET)
 
-setup : raylib
-
 debug: CCFLAGS += -g -O0 -DPHYSAC_DEBUG
 debug: clean $(TARGET) clean
 
