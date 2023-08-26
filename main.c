@@ -4,6 +4,7 @@
 #include "physac.h"
 
 #include "widget.h"
+#include "helper.h"
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
 
@@ -34,19 +35,41 @@ int main(int argc, char* argv[]) {
     PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2.0, screenHeight }, screenWidth, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
 
+    bool mouseClickHandled;
+    bool somethingIsClickedOn = false;
+
+    WidgetArray myWidgets;
+    initWidgetArray(&myWidgets, 3);
+
     while (!WindowShouldClose()) {
 
+        // we don't have a "mouse just clicked" thing, so we'll need to track state manually
+        if (IsMouseButtonUp(MOUSE_LEFT_BUTTON)) {
+            mouseClickHandled = false;
+            somethingIsClickedOn = false;
+        }
+
+        // now actually handle that click
+        int bodiesCount = GetPhysicsBodiesCount();
+        for (int i = 0; i < bodiesCount; i++) {
+            PhysicsBody body = GetPhysicsBody(i);
+            int vertexCount = GetPhysicsShapeVerticesCount(i);
+            
+            somethingIsClickedOn = somethingIsClickedOn || (pointInPhysicsBody(GetMousePosition(), body, vertexCount));
+        }
+
         // spawn some R E C T A N G L E S
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !somethingIsClickedOn) {
             // PhysicsBody rect = CreatePhysicsBodyRectangle(GetMousePosition(), GetRandomValue(100, 300),GetRandomValue(100, 200), 1.0);
             // rect->freezeOrient = true;
 
             // create a widget
-            SimpleWidget myWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
+            SimpleWidget aWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
+            insertWidgetArray(&myWidgets, aWidget);
         }
 
         // destroy physics bodies that have fallen off screen
-        int bodiesCount = GetPhysicsBodiesCount();
+        bodiesCount = GetPhysicsBodiesCount();
         for (int i = bodiesCount - 1; i >= 0; i--)
         {
             PhysicsBody body = GetPhysicsBody(i);
