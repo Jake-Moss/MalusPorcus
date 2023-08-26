@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
             // rect->freezeOrient = true;
 
             // create a widget
-            SimpleWidget aWidget = newWidget(GetMousePosition(), (Vector2){120,80}, 3);
+            SimpleWidget aWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
             insertWidgetArray(&myWidgets, aWidget);
         }
 
@@ -134,7 +134,8 @@ int main(int argc, char* argv[]) {
                 SimpleWidget testWidget = myWidgets.array[i];
                 PhysicsBody testBody = testWidget.body;
 
-                drawDigitalClock(&testWidget, &font);
+                // drawDigitalClock(&testWidget, &font);
+                //
                 if (myWidgets.array[i].isGrabbed) {
                     DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
                     DrawLine(testBody->position.x, testBody->position.y, testBody->position.x + testWidget.grabOffset.x, testBody->position.y + testWidget.grabOffset.y, ORANGE);
