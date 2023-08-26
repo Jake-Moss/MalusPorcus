@@ -3,6 +3,6 @@
 
 #include "widget.h"
 
-void drawAnalogClock(SimpleWidget *widget);
+void drawAnalogClock(Widget *widget);
 
 #endif // ANALOG_CLOCK_H_

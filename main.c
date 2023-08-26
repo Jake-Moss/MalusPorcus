@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 
         // now actually handle that click
         for (int i = 0; i < myWidgets.count; i++) {
-            SimpleWidget testWidget = myWidgets.array[i];
+            Widget testWidget = myWidgets.array[i];
             PhysicsBody testBody = testWidget.body;
             int vertexCount = testBody->shape.vertexData.vertexCount;
 
@@ -80,8 +80,11 @@ int main(int argc, char* argv[]) {
             // rect->freezeOrient = true;
 
             // create a widget
-            SimpleWidget aWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
+            Widget aWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
             insertWidgetArray(&myWidgets, aWidget);
+        } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn) {
+            Widget bWidget = newWidget(GetMousePosition(), (Vector2){120, 80}, 3);
+            insertWidgetArray(&myWidgets, bWidget);
         }
 
         // destroy physics bodies that have fallen off screen
@@ -131,16 +134,17 @@ int main(int argc, char* argv[]) {
 
             // draw widgets
             for (int i = 0; i < myWidgets.count; i++) {
-                SimpleWidget testWidget = myWidgets.array[i];
+                Widget testWidget = myWidgets.array[i];
                 PhysicsBody testBody = testWidget.body;
 
-                // drawDigitalClock(&testWidget, &font);
+                //drawDigitalClock(&testWidget, &font);
                 //
                 if (myWidgets.array[i].isGrabbed) {
                     DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
                     DrawLine(testBody->position.x, testBody->position.y, testBody->position.x + testWidget.grabOffset.x, testBody->position.y + testWidget.grabOffset.y, ORANGE);
                 } else {
-                    DrawCircle(testBody->position.x, testBody->position.y, 10, BLUE);
+                    // DrawCircle(testBody->position.x, testBody->position.y, 10, BLUE);
+                    testWidget.draw(&testWidget);
                 }
             }
             

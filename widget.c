@@ -1,25 +1,30 @@
 #include "widget.h"
 #include "stdio.h"
 
-SimpleWidget newWidget(Vector2 location, Vector2 size, int image) {
+Widget newWidget(Vector2 location, Vector2 size, int image) {
     PhysicsBody body = CreatePhysicsBodyRectangle(location, size.x, size.y, 1.0);
     body->freezeOrient = true;
-    SimpleWidget newWidget;
+    Widget newWidget;
     newWidget.size = size;
     newWidget.body = body;
     newWidget.image = image;
     newWidget.isGrabbed = false;
     newWidget.grabOffset = (Vector2) {0.0, 0.0};
-
+    newWidget.draw = &draw;
     return newWidget;
 }
 
-void drawWidget(SimpleWidget *widget) {
+void draw(Widget *widget) {
+    Vector2 pos = widget->body->position;
+    DrawCircle(pos.x, pos.y, 5.0, GREEN);
+}
+
+void drawWidget(Widget *widget) {
     Vector2 pos = widget->body->position;
     DrawCircle(pos.x, pos.y, 10.0, BLUE);
 }
 
-void moveWhenGrabbed(SimpleWidget *widget) {
+void moveWhenGrabbed(Widget *widget) {
     // check if the widget is currently grabbed - if so, move towards the mouse + graboffset (using a lot of impulse)
 
     if (widget->isGrabbed) {
@@ -34,24 +39,26 @@ void moveWhenGrabbed(SimpleWidget *widget) {
 
 
 void initWidgetArray(WidgetArray *a, size_t initialSize) {
-    a->array = malloc(initialSize * sizeof(SimpleWidget)); // should this be sizeof(SimpleWidget)?
+    a->array = malloc(initialSize * sizeof(Widget)); // should this be sizeof(SimpleWidget)?
     a->used = 0;
     a->size = initialSize;
     a->count = 0;
 }
 
-void insertWidgetArray(WidgetArray *a, SimpleWidget element) {
+void insertWidgetArray(WidgetArray *a, Widget element) {
     // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
     // Therefore a->used can go up to a->size 
     if (a->used == a->size) {
         a->size *= 2;
-        a->array = realloc(a->array, a->size * sizeof(SimpleWidget)); // as above?
+        a->array = realloc(a->array, a->size * sizeof(Widget)); // as above?
     }
     a->array[a->used++] = element;
     a->count++;
 }
 
+
 void freeWidgetArray(WidgetArray *a) {
+
     free(a->array);
     a->array = NULL;
     a->used = a->size = 0;
