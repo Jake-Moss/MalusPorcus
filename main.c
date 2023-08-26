@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
                 Widget testWidget = myWidgets.array[i];
                 PhysicsBody testBody = testWidget.body;
 
-                drawDigitalClock(&testWidget, &font);
+                //drawDigitalClock(&testWidget, &font);
                 //
                 if (myWidgets.array[i].isGrabbed) {
                     DrawCircle(testBody->position.x, testBody->position.y, 10, RED);
