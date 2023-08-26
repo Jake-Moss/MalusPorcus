@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
             // rect->freezeOrient = true;
 
             // create a widget
-            SimpleWidget aWidget = newWidget(GetMousePosition(), (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
+            SimpleWidget aWidget = newWidget(GetMousePosition(), (Vector2){120,80}, 3);
             insertWidgetArray(&myWidgets, aWidget);
         }
 

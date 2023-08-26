@@ -11,6 +11,7 @@
 struct simpleWidget {
     PhysicsBody body;
     int image;
+    Vector2 size; //width, height
     Vector2 grabOffset;
     bool isGrabbed;
 };

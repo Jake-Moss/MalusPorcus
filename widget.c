@@ -5,6 +5,7 @@ SimpleWidget newWidget(Vector2 location, Vector2 size, int image) {
     PhysicsBody body = CreatePhysicsBodyRectangle(location, size.x, size.y, 1.0);
     body->freezeOrient = true;
     SimpleWidget newWidget;
+    newWidget.size = size;
     newWidget.body = body;
     newWidget.image = image;
     newWidget.isGrabbed = false;
