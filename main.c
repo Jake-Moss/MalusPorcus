@@ -7,6 +7,7 @@
 #include "widget.h"
 #include "helper.h"
 #include "digital_clock.h"
+#include "aquarium.h"
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
 
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
     PhysicsBody floor = CreatePhysicsBodyRectangle((Vector2){ screenWidth/2.0, screenHeight }, screenWidth, 100, 10);
     floor->enabled = false; // Disable body state to convert it to static (no dynamics, but collisions)
 
-    bool mouseClickHandled;
+    bool mouseClickHandled = false;
     bool somethingIsClickedOn = false;
 
     WidgetArray myWidgets;
@@ -94,21 +95,23 @@ int main(int argc, char* argv[]) {
             // if it's grabbed, or whatever else is grabbed, apply a force
             moveWhenGrabbed(&myWidgets.array[i], virtualMouse);
         }
+        {
+            Widget aWidget = (Widget){.dead = true};
+            // spawn some R E C T A N G L E S
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !somethingIsClickedOn) {
+                // PhysicsBody rect = CreatePhysicsBodyRectangle(GetMousePosition(), GetRandomValue(100, 300),GetRandomValue(100, 200), 1.0);
+                // rect->freezeOrient = true;
 
-        // spawn some R E C T A N G L E S
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !somethingIsClickedOn) {
-            // PhysicsBody rect = CreatePhysicsBodyRectangle(GetMousePosition(), GetRandomValue(100, 300),GetRandomValue(100, 200), 1.0);
-            // rect->freezeOrient = true;
+                // create a widget
+                aWidget = newWidget(virtualMouse, (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
+            } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn) {
+                aWidget = createDigitalClock(virtualMouse, (Vector2){10, 10}, font);
+            } else if (IsMouseButtonPressed(MOUSE_MIDDLE_BUTTON) && !somethingIsClickedOn) {
+                aWidget = createAquarium(virtualMouse, (Vector2){200, 100}, font);
+            }
 
-            // create a widget
-            Widget aWidget = newWidget(virtualMouse, (Vector2){GetRandomValue(100, 200),GetRandomValue(100, 200)}, 3);
-            insertWidgetArray(&myWidgets, aWidget);
-        } else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !somethingIsClickedOn) {
-            //Widget bWidget = newWidget(virtualMouse, (Vector2){120, 80}, 3);
-            Widget digitalClockWidget = createDigitalClock(virtualMouse, (Vector2){120, 80}, font);
-            insertWidgetArray(&myWidgets, digitalClockWidget);
+            if (!aWidget.dead) insertWidgetArray(&myWidgets, aWidget);
         }
-
         // destroy physics bodies that have fallen off screen
         for (int i = 0; i < myWidgets.count; i++) {
             if (myWidgets.array[i].dead) {continue;}
@@ -133,13 +136,14 @@ int main(int argc, char* argv[]) {
             
             // debug draw physics bodies
             if (debugRender) {
-                for (int i = 0; i < myWidgets.count; i++) {
-                    if (myWidgets.array[i].dead) {continue;}
-                    PhysicsBody body = myWidgets.array[i].body;
+                int bodiesCount = GetPhysicsBodiesCount();
+                for (int i = 0; i < bodiesCount; i++)
+                {
+                    PhysicsBody body = GetPhysicsBody(i);
 
                     if (body != 0)
                     {
-                        int vertexCount = GetPhysicsShapeVerticesCount(i);
+                        int vertexCount = GetPhysicsShapeVerticesCount(body->id);
                         for (int j = 0; j < vertexCount; j++)
                         {
                             // Get physics bodies shape vertices to draw lines

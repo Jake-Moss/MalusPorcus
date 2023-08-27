@@ -7,12 +7,15 @@ Widget newWidget(Vector2 location, Vector2 size, int image) {
     Widget newWidget;
     newWidget.size = size;
     newWidget.body = body;
+    newWidget.body1 = NULL;
+    newWidget.body2 = NULL;
     newWidget.image = image;
     newWidget.isGrabbed = false;
     newWidget.grabOffset = (Vector2) {0.0, 0.0};
     newWidget.draw = &draw;
     newWidget.dead = false;
     newWidget.free = &widgetFree;
+    newWidget.data = NULL;
     return newWidget;
 }
 

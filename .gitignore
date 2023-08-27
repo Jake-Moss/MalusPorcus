@@ -3,3 +3,5 @@ main
 out
 *.o
 *.wasm
+*.js
+*.html

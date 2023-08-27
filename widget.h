@@ -13,6 +13,8 @@
 typedef struct widget Widget;
 struct widget {
     PhysicsBody body;
+    PhysicsBody body1;
+    PhysicsBody body2;
     int image;
     Vector2 size; //width, height
     Vector2 grabOffset;
@@ -21,6 +23,7 @@ struct widget {
     void (*draw)(Widget*); // generic draw function pointer to be then defined for that pecific widget
     bool dead;
     void (*free)(Widget*);
+    void *data;
 };
 
 void draw(Widget *widget);
